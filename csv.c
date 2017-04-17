@@ -26,7 +26,7 @@ static int count_line( const char* filename )
   return line_count;
 }
 
-int read_csv( const char* filename, data_t* data, int* data_num )
+int read_csv( const char* filename, data_t** data, int* data_num )
 {
   *data_num = count_line( filename );
 
@@ -36,8 +36,8 @@ int read_csv( const char* filename, data_t* data, int* data_num )
     exit( -1 );
   }
 
-  data = (data_t *)malloc( *data_num * sizeof( data_t ) );
-  if( data == NULL ){
+  *data = (data_t *)malloc( *data_num * sizeof( data_t ) );
+  if( *data == NULL ){
     printf( "Cannot allocate memory\n" );
     exit( -1 );
   }
@@ -49,10 +49,11 @@ int read_csv( const char* filename, data_t* data, int* data_num )
       continue;
     }
     sscanf( line, "%[^,],%[^,],%d,%d",
-            &data[idx].type,
-            &data[idx].cost,
-            &data[idx].hint,
-            &data[idx].prio );
+            &( *data + idx )->type,
+            ( *data + idx )->cost,
+            &( *data + idx )->hint,
+            &( *data + idx )->prio
+    );
     ++idx;
   }
   return 0;
